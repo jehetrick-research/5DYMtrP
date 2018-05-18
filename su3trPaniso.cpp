@@ -217,7 +217,7 @@ int metropolis_trP(gauge_field &U, mdp_matrix_field &S, mdp_matrix_field &Pls,
   zP = mdp_complex(0,0);
 
   for(int parity=1; parity>=0; parity--)
-     for(mu=0; mu<U.ndim-1; mu++) {  // do space-like updates mu=0,1,2,...ndim-2
+     for(mu=0; mu<U.ndim-1; mu++) {   // DO SPACE-LIKE UPDATES mu=0,1,2,...ndim-2
 	staple_plaq = load_staples(U, S, mu, parity, beta4, beta5);
      //     cout << "partial plaq from staple: " << mu << " " << staple_plaq << endl;
 
@@ -262,7 +262,7 @@ int metropolis_trP(gauge_field &U, mdp_matrix_field &S, mdp_matrix_field &Pls,
   }
   U.update();
 
-  // "time-like" update
+  // "TIME-LIKE" UPDATES
   mu = U.ndim-1;
   nt = U.lattice().size(mu);
 
@@ -273,29 +273,38 @@ int metropolis_trP(gauge_field &U, mdp_matrix_field &S, mdp_matrix_field &Pls,
      opp_parity = parity==0 ? 1 : 1;
 
      for(t=0; t<nt; t++) {
-	zP += ploop_less_slice_t(U, Pls, mu, t, T1, T2, parity);
+
+	if(h != 0.0) {
+	   zP += ploop_less_slice_t(U, Pls, mu, t, T1, T2, parity);
+	}
 
 	forallsitesofparity(x, parity) if(x(mu)==t) {
 
-	   deltaSU3 = make_change(U, x, scale);
-	   newU = deltaSU3 * U(x,mu);
-	   
 	   // Old action: [beta4 and beta5 are in staples]
 	   oldaction=0.333333*real(trace( U(x,mu) * S(x) ));
-	   // add (-h tr_A P)
-	   tmpmat = U(x,mu) * Pls(x);
-	   trPf = trace(tmpmat);
-	   trPA = real(trPf)*real(trPf) + imag(trPf)*imag(trPf) - 1.0;
-	   oldaction -= h*trPA;
-	   
+
+	   deltaSU3 = make_change(U, x, scale);
+	   newU = deltaSU3 * U(x,mu);
+
 	   // New action
 	   newaction=0.333333*real(trace( newU * S(x) ));
-	   // add (-h tr_A P)
-	   tmpmat = newU * Pls(x);
-	   trPf = trace(tmpmat);
-	   trPA = real(trPf)*real(trPf) + imag(trPf)*imag(trPf) - 1.0;
-	   newaction -= h*trPA;
-	   	   
+	   
+	   // add (-h tr_A P) if h!=0
+	   if(h != 0.0) {
+	      // Old action
+	      // Add (-h tr_A P)
+	      tmpmat = U(x,mu) * Pls(x);
+	      trPf = trace(tmpmat);
+	      trPA = real(trPf)*real(trPf) + imag(trPf)*imag(trPf) - 1.0;
+	      oldaction -= h*trPA;
+	      
+	      // New action
+	      // Add (-h tr_A P)
+	      tmpmat = newU * Pls(x);
+	      trPf = trace(tmpmat);
+	      trPA = real(trPf)*real(trPf) + imag(trPf)*imag(trPf) - 1.0;
+	      newaction -= h*trPA;
+	   }
 	   /**
 	      cout << " x: " << x << " mu: " << mu << endl;
 	      cout << "gen: " << gen << endl;
@@ -550,6 +559,7 @@ int main(int argc, char** argv) {
 
   // Special Debugging lattices?  
   // diagonal integer time-like links for Ploop testing
+
   /**
   cout <<"Setting diagonal integer time-like links\n";
   mdp_matrix id3 = mdp_identity(3);

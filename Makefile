@@ -61,3 +61,9 @@ su3dev4:: su3dev4.cpp ploop3.cpp
 su3devtest:: su3devtest.cpp ploop3.cpp
 	${CC} ${CFLAGS} su3devtest.cpp -o su3devtest
 
+su3trPaniso:: su3trPaniso.cpp ploop3.cpp
+	${CC} ${CFLAGS} su3trPaniso.cpp -o su3trPaniso
+
+su3trPaniso2:: su3trPaniso2.cpp ploop3.cpp
+	${CC} ${CFLAGS} su3trPaniso2.cpp -o su3trPaniso2
+
