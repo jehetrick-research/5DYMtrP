@@ -4,4 +4,7 @@ This project explores the Hosotani Mechanism in a more realistic setting:
 
 * 5-dimensional Pure Yang-Mills gauge theory, with an $h{\rm Tr}_{\rm adj}P(x)$ term added to the action to *mimic* adjoint fermions with periodic B.C.'s.
 
+See: https://github.com/jehetrick-research/5DYMtrP/blob/master/NOTES_5DYMtrP.ipynb
+
+
  
